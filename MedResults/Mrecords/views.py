@@ -23,16 +23,9 @@ from bokeh.models.widgets import CheckboxGroup, Tabs
 from bokeh.layouts import widgetbox, row, column
 from bokeh.models.widgets import DateRangeSlider
 from bokeh.models.widgets import DatePicker
+
 import pandas as pd
 import numpy as np
-
-
-# class MainView(View):
-#     templ = 'index.html'
-#
-#     def get(self, request):
-#         all_files = File.objects.all()
-#         return render(request, self.templ, {"all_files": all_files})
 
 
 class ClinicOps(View):
@@ -41,14 +34,16 @@ class ClinicOps(View):
 
     def get(self, request):
         form = self.form_class
-        data = Clinic.objects.all()
+        data = Clinic.objects.filter(owner=request.user).order_by('name')
         return render(request, self.templ, {'form': form,
                                             'data': data})
 
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
-            form.save()
+            instance = form.save(commit=False)
+            instance.owner = request.user
+            instance.save()
             return redirect('c_ops')
 
 class ClinicUpdate(View):
@@ -100,14 +95,16 @@ class SpecialistOps(View):
 
     def get(self, request):
         form = self.form_class
-        data = Specialist.objects.all()
+        data = Specialist.objects.filter(owner=request.user).order_by('surname')
         return render(request, self.templ, {'form': form,
                                             'data': data})
 
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
-            form.save()
+            instance = form.save(commit=False)
+            instance.owner = request.user
+            instance.save()
             return redirect('s_ops')
         return redirect('s_ops')
 
@@ -151,15 +148,17 @@ class ExaminationOps(View):
     form_class = ExaminationForm
 
     def get(self, request):
-        form = self.form_class()
-        data = Examination.objects.all()
+        form = self.form_class(user=request.user)
+        data = Examination.objects.filter(owner=request.user).order_by("-date")
         return render(request, self.templ, {'form': form,
                                             'data': data})
 
     def post(self, request):
-        form = self.form_class(request.POST)
+        form = self.form_class(user=request.user, data=request.POST)
         if form.is_valid():
-            form.save()
+            instance = form.save(commit=False)
+            instance.owner = request.user
+            instance.save()
             return redirect('e_ops')
 
 
@@ -169,7 +168,7 @@ class ExaminationUpdate(View):
 
     def get(self, request, examination_id):
         object = Examination.objects.get(pk=examination_id)
-        form = self.form_class(initial={'name': object.name,
+        form = self.form_class(user=request.user, initial={'name': object.name,
                                         'date': object.date,
                                         'signer': object.signer_id,
                                         'clinic': object.clinic_id})
@@ -177,7 +176,7 @@ class ExaminationUpdate(View):
 
     def post(self, request, examination_id):
         object = Examination.objects.get(pk=examination_id)
-        form = self.form_class(request.POST, instance=object)
+        form = self.form_class(user=request.user, data=request.POST, instance=object)
         if form.is_valid():
             form.save()
             return redirect('e_ops')
@@ -190,7 +189,7 @@ class ExaminationDelete(View):
 
     def get(self, request, examination_id):
         object = Examination.objects.get(pk = examination_id)
-        form = self.form_class(initial={'name': object.name,
+        form = self.form_class(user=request.user, initial={'name': object.name,
                                         'date': object.date,
                                         'signer': object.signer_id,
                                         'clinic': object.clinic_id})
@@ -201,20 +200,23 @@ class ExaminationDelete(View):
         object.delete()
         return redirect('e_ops')
 
+
 class FileOps(View):
     templ = 'operations.html'
     form_class = FileForm
 
     def get(self, request):
-        form = self.form_class
-        data = File.objects.all()
+        form = self.form_class(user=request.user)
+        data = File.objects.filter(owner=request.user).order_by('-examination__date')
         return render(request, self.templ, {'form': form,
                                             'data': data})
 
     def post(self, request):
-        form = self.form_class(request.POST, request.FILES)
+        form = self.form_class(user=request.user, data=request.POST, files=request.FILES)
         if form.is_valid():
-            form.save()
+            instance = form.save(commit=False)
+            instance.owner = request.user
+            instance.save()
             return redirect('f_ops')
 
 
@@ -224,26 +226,27 @@ class FileUpdate(View):
 
     def get(self, request, file_id):
         object = File.objects.get(pk=file_id)
-        form = self.form_class(initial={'file': object.file,
+        form = self.form_class(user=request.user, initial={'file': object.file,
                                         'examination': object.examination_id})
         return render(request, self.temp, {'form': form})
 
     def post(self, request, file_id):
         object = File.objects.get(pk=file_id)
-        form = self.form_class(request.POST, request.FILES, instance=object)
+        form = self.form_class(user=request.user, data=request.POST, files=request.FILES, instance=object)
 
         if form.is_valid():
             form.save()
             return redirect('f_ops')
         return redirect('f_ops')
 
+
 class FileDelete(View):
     temp = 'operations.html'
     form_class = FileForm
 
     def get(self, request, file_id):
-        object = File.objects.get(pk = file_id)
-        form = self.form_class(initial={'file': object.file,
+        object = File.objects.get(pk=file_id)
+        form = self.form_class(user=request.user, initial={'file': object.file,
                                         'examination': object.examination_id,
                                         })
         return render(request, self.temp, {'form': form})
@@ -252,7 +255,6 @@ class FileDelete(View):
         object = File.objects.get(pk=file_id)
         object.delete()
         return redirect('f_ops')
-
 
 
 def make_plot(source):
@@ -291,6 +293,7 @@ def make_plot(source):
     #                        formatters={
     #                            'examination__date': 'datetime'}
     #                        )
+
     hover_tool = HoverTool(
                            tooltips=TOOLTIPS,
                            formatters={
@@ -332,7 +335,7 @@ def make_plot(source):
     reset_callback = CustomJS(code="""
     var catch_canvas = document.getElementById('canvas');
     if (catch_canvas) {
-    catch_canvas.remove()
+    catch_canvas.remove();
     }
     """)
 
@@ -359,7 +362,7 @@ def make_plot(source):
                )
 
     p.js_on_event('reset', reset_callback)
-    p.xaxis[0].formatter = DatetimeTickFormatter(months='%B %Y')
+    p.xaxis[0].formatter = DatetimeTickFormatter(months='%B %Y', days='%d %B')
 
     p.background_fill_color = "white"
     p.background_fill_alpha = 0.5
@@ -399,7 +402,7 @@ class BokehOps(View):
     templ = 'index2.html'
 
     def get(self, request):
-        query2 = File.objects.all().values('file',
+        query2 = File.objects.filter(owner=request.user).values('file',
                                            'examination_id',
                                            'examination__date',
                                            'examination__name',
@@ -408,6 +411,7 @@ class BokehOps(View):
                                            'examination__signer__specialisation'). \
             order_by('examination__date')
         print(query2)
+
         pd.set_option('display.max_columns', None)
         pd.set_option('display.max_rows', None)
         pd.set_option('display.max_colwidth', -1)
@@ -517,7 +521,6 @@ class BokehOps(View):
          console.log(psource.data);
          psource.change.emit();
             """)
-
 
         checkboxes.js_on_change('active', callback)
         datepicker_s.js_on_change('value', callback)
