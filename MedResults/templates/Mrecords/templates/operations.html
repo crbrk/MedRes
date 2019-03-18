@@ -1,0 +1,75 @@
+
+
+{% extends 'base.html' %}
+{% block content %}
+
+
+    <div id="formspace">
+        {% for message in messages %}
+            <style> h5 {text-align: center} mark#e {color:whitesmoke; background-color: red;}
+            mark#s {color:whitesmoke; background-color:green}</style>
+            {% if message.tags == 'error' %}
+            <h5><mark id="e">{{ message }}</mark></h5>
+            {% else %}
+            <h5><mark id="s">{{ message }}</mark></h5>
+            {% endif %}
+        {% endfor %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+            {{ form.as_p }}
+            <input type="submit">
+
+    </form>
+    </div>
+
+    <ul>
+    {% for x in data %}
+        <div id="grid">
+        <hr>
+
+        {% if x.examination %}
+            <li id="grid">{{ x.examination }}</li>
+
+        {% else %}
+            <li id="grid">{{ x }}</li>
+
+        {% endif %}
+
+        <font size="1em">
+
+        {% if x.identify == 'clinic' %}
+            <span class="square"><a class="tenth before after" href="{% url 'c_del' clinic_id=x.id %}">skasuj</a></span>
+            <span class="square"><a class="tenth before after" href="{% url 'c_upd' clinic_id=x.id %}">edytuj</a></span>
+        {% endif %}
+        {% if x.identify == 'specialist' %}
+            <span class="square"><a class="tenth before after" href="{% url 's_del' specialist_id=x.id %}">skasuj</a></span>
+            <span class="square"><a class="tenth before after" href="{% url 's_upd' specialist_id=x.id %}">edytuj</a></span>
+        {% endif %}
+            <p><span class="square"><a class="tenth before after" href="{{ x.file.url }}">{{ x.file }}</a></span></p>
+        {% if x.identify == 'examination' %}
+            <span class="square"><a class="tenth before after" href="{% url 'e_del' examination_id=x.id %}">skasuj</a></span>
+            <span class="square"><a class="tenth before after" href="{% url 'e_upd' examination_id=x.id %}">edytuj</a></span>
+        {% endif %}
+        {% if x.identify == 'file' %}
+            <span class="square"><a class="tenth before after" href="{% url 'f_del' file_id=x.id %}">skasuj</a></span>
+            <span class="square"><a class="tenth before after" href="{% url 'f_upd' file_id=x.id %}">edytuj</a></span>
+        {% endif %}
+        </font>
+        </div>
+
+    {% endfor %}
+    </ul>
+    <hr>
+
+
+
+
+
+{% endblock %}
+
+
+
+
+

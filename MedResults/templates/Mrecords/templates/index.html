@@ -1,0 +1,23 @@
+{% load static %}
+
+<html lang="pl-PL">
+<meta charset="UTF-8">
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static "Mrecords/static/css/main.css" %}">
+</head>
+<body>
+    {% if user.is_authenticated %}
+        Zalogowany użytkownik: {{ user.username }}
+        <a href="{% url 'logout' %}"><button>WYLOGUJ</button></a>
+    {% else %}
+        Użytkownik niezalogowany.
+        <a href='{% url 'login' %}'><button>ZALOGUJ</button></a>
+    {% endif %}
+</body>
+</html>
+
+
+
+
+
+

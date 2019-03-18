@@ -1,0 +1,106 @@
+{% load static %}
+<html lang="pl-PL">
+<meta charset="UTF-8">
+<head>
+    {% if form.identify == "register" %}
+    <title>Rejestracja</title>
+    {% else %}
+    <title>Logowanie</title>
+    {% endif %}
+
+    <link rel="stylesheet" type="text/css" href="{% static "Mrecords/static/css/login.css" %}">
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+        var l = document.querySelector("form.login-form");
+        var r = document.querySelector("form.register-form");
+        if (l) {
+                var a = document.querySelectorAll("label");
+                for (let x = 0; x < a.length; x++) {
+                    a[x].style.display = 'none'}
+
+                var b = document.querySelector("input#id_username");
+                b.setAttribute("placeholder", "użytkownik");
+
+                var c = document.querySelector("input#id_password");
+                c.setAttribute("placeholder", 'hasło');
+
+        }
+        if (r) {
+            var dd = document.querySelectorAll('label');
+            for (let y = 0; y < dd.length; y++) {
+                dd[y].style.display ='none'}
+
+            var d = document.querySelector("input#id_username");
+            d.setAttribute('placeholder', 'nazwa użytkownika');
+
+            var e = document.querySelector("input#id_password1");
+            e.setAttribute("placeholder", "hasło - minimum 8 znaków");
+
+            var f = document.querySelector("input#id_password2");
+            f.setAttribute("placeholder", "powtórz hasło");
+
+            var g = document.querySelectorAll("span");
+            console.log(g);
+            for (let x = 0; x < g.length; x++) {
+                g[x].style.display = "none";}
+        }
+});
+</script>
+
+</head>
+<body>
+
+
+
+
+<div class="login-page">
+
+  <div class="form">
+        {% for message in messages %}
+            <style> h5 {text-align: center} mark#e {color:whitesmoke; background-color: red;}
+            mark#s {color:whitesmoke; background-color:green}</style>
+            {% if message.tags == 'error' %}
+            <h5><mark id="e">{{ message }}</mark></h5>
+            {% else %}
+            <h5><mark id="s">{{ message }}</mark></h5>
+            {% endif %}
+        {% endfor %}
+
+        {% if form.identify == "register" %}
+            <form class="register-form" method="post">
+            {% csrf_token %}
+            {{ form }}
+
+                {% if form.errors %}
+
+
+
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+
+                {% endif %}
+
+            <button type="submit">zarejestruj</button>
+            <p class="message">Masz już konto? <a href="{% url 'login' %}">ZALOGUJ</a></p>
+            </form>
+        {% else %}
+            <form class="login-form" method="post">
+            {% csrf_token %}
+            {{ form }}
+
+            <button type="submit">zaloguj</button>
+            <p class="message">Nie masz konta ? <a href="{% url 'register' %}">REJESTRACJA</a></p>
+            </form>
+        {% endif %}
+
+  </div>
+</div>
+
+
+
+</body>
+</html>

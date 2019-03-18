@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl-PL">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Mrecords</title>
+    {% load static %}
+    <!-- links needed for bookeh js !-->
+    <link href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.pydata.org/bokeh/release/bokeh-widgets-1.0.4.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.pydata.org/bokeh/release/bokeh-tables-1.0.4.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+    <link rel="stylesheet" type="text/css" href="{% static "Mrecords/static/css/main.css" %}">
+    <script src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.4.min.js"></script>
+    <script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-1.0.4.min.js"></script>
+    <script src="https://cdn.pydata.org/bokeh/release/bokeh-tables-1.0.4.min.js"></script>
+    <script src="http://cdn.pydata.org/bokeh/release/bokeh-api-1.0.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+    <script src="http://momentjs.com/downloads/moment-with-locales.js"></script>
+
+</head>
+<body>
+
+
+
+
+{% block nav %}
+    <div class="navi">
+
+        <span class="square"><a id="nav" class="tenth before after" href="{% url 'c_ops' %}">PLACÓWKI</a></span>
+
+        <span class="square"><a id="nav" class="tenth before after" href="{% url 's_ops' %}">LEKARZE</a></span>
+
+        <span class="square"><a id="nav" class="tenth before after" href="{% url 'e_ops' %}">BADANIA</a></span>
+
+        <span class="square"><a id="nav" class="tenth before after" href="{% url 'f_ops' %}">PLIKI</a></span>
+
+        <span class="square"><a id="nav" class="tenth before after" href="{% url 'b_ops' %}">WYKRES</a></span>
+
+        <span class="square"><a id="nav" class="tenth before after" href="{% url 'logout' %}">WYLOGUJ</a></span>
+
+    </div>
+        <hr>
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+    <script>
+
+    var picker = new Pikaday(
+    {
+        field: document.getElementById('datepicker'),
+        format: 'D.M.YYYY',
+        toString(date, format) {
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
+    },
+    });
+    </script>
+</body>
+</html>
