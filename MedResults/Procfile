@@ -1,1 +1,1 @@
-web: gunicorn WordCloud.wsgi
+web: gunicorn MedResults.wsgi
