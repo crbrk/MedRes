@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     'Mrecords'
 ]
 
@@ -50,8 +51,7 @@ ROOT_URLCONF = 'MedResults.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates/Mrecords/templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates/Mrecords/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -117,10 +117,6 @@ USE_L10N = True
 USE_TZ = False
 
 
-
-
-
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
@@ -133,10 +129,10 @@ STATICFILES_DIRS = [
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
-#MEDIA_URL is a placeholder for the url a client should hit to access your media.
+# MEDIA_URL is a placeholder for the url a client should hit to access your media.
 MEDIA_URL = '/media/documents/'
 
-#MEDIA_ROOT is the Absolute filesystem path to the directory that will hold user-uploaded files.
+# MEDIA_ROOT is the Absolute filesystem path to the directory that will hold user-uploaded files.
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/Mrecords/media/documents')
 
 LOGIN_URL = '/'
@@ -144,6 +140,20 @@ LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/clinic/'
 
 LOGOUT_REDIRECT_URL = '/'
+
+# ---
+AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+AWS_STORAGE_BUCKET_NAME = os.environ['S3_BUCKET_NAME']
+
+# version 1 - tutorial
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+# version 2 - git repo
+S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
+
+DEFAULT_FILE_STORAGE = 'MedResults/storage_backends.MediaStorage'
+
+
 
 import django_heroku
 django_heroku.settings(locals())
