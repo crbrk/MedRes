@@ -1,9 +1,14 @@
 bokeh==1.0.4
+boto3==1.9.116
+botocore==1.12.116
 dj-database-url==0.5.0
 Django==2.1.7
 django-heroku==0.3.1
+django-storages==1.7.1
+docutils==0.14
 gunicorn==19.9.0
 Jinja2==2.10
+jmespath==0.9.4
 MarkupSafe==1.1.0
 numpy==1.16.1
 packaging==19.0
@@ -16,7 +21,9 @@ python-dateutil==2.8.0
 python-magic==0.4.15
 pytz==2018.9
 PyYAML==5.1
+s3transfer==0.2.0
 six==1.12.0
 tabulate==0.8.3
 tornado==5.1.1
+urllib3==1.24.1
 whitenoise==4.1.2
