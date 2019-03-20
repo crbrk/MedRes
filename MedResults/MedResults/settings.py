@@ -1,5 +1,6 @@
 
 import os
+
 # import locale
 # locale.setlocale(locale.LC_ALL, 'pl_PL.UTF-8')
 # print(locale.getlocale())
@@ -124,16 +125,10 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
-
 ]
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
-# MEDIA_URL is a placeholder for the url a client should hit to access your media.
-MEDIA_URL = '/media/documents/'
-
-# MEDIA_ROOT is the Absolute filesystem path to the directory that will hold user-uploaded files.
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/Mrecords/media/documents')
 
 LOGIN_URL = '/'
 
@@ -145,15 +140,31 @@ LOGOUT_REDIRECT_URL = '/'
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 AWS_STORAGE_BUCKET_NAME = os.environ['S3_BUCKET_NAME']
+AWS_S3_SIGNATURE_VERSION = os.environ['AWS_S3_SIGNATURE_VERSION']
+AWS_S3_REGION_NAME = os.environ['AWS_S3_REGION_NAME']
 
-# version 1 - tutorial
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-# version 2 - git repo
+
+# 1/2
+AWS_S3_CUSTOM_DOMAIN = 'http://%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+# 2/2
 S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
 
-DEFAULT_FILE_STORAGE = 'MedResults/storage_backends.MediaStorage'
+
+from storages.backends.s3boto3 import S3Boto3Storage
+class MediaStorage(S3Boto3Storage):
+    default_acl = 'private'
+    location = 'media'
+    file_overwrite = False
+    custom_domain = False
 
 
+DEFAULT_FILE_STORAGE = 'MedResults.settings.MediaStorage'
+
+# MEDIA_ROOT is the Absolute filesystem path to the directory that will hold user-uploaded files.
+MEDIA_ROOT = AWS_S3_CUSTOM_DOMAIN
+
+# MEDIA_URL is a placeholder for the url a client should hit to access your media.
+MEDIA_URL = AWS_S3_CUSTOM_DOMAIN + '/media/'
 
 import django_heroku
 django_heroku.settings(locals())

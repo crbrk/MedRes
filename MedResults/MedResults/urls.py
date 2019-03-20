@@ -53,6 +53,6 @@ urlpatterns = [
     path('file', FileOps.as_view(), name='f_ops'),
     path('file/<int:file_id>', FileUpdate.as_view(), name='f_upd'),
     path('file_delete/<int:file_id>', FileDelete.as_view(), name='f_del'),
-    path('wykres/', BokehOps.as_view(), name='b_ops'),
+    path('wykres/', BokehOps.as_view(), name='b_ops'),]
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

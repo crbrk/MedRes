@@ -459,13 +459,12 @@ class BokehOps(LoginRequiredMixin, View):
         start = psource.data['examination__date'].min() - pd.Timedelta(days=10)
         stop = psource.data['examination__date'].max() + pd.Timedelta(days=10)
 
+
+        from MedResults.settings import S3_URL
+        mr = S3_URL
+
         tooltips = """
                 <div>
-                    <div>
-                        <embed
-                            src='/media/documents/@file' alt="@file" height="350" width="210"
-                        ></embed>
-                    </div>
                     <div>
                         <p>
                         <span style="font-size: 12px; font-weight: bold;">@examination__name</span>
@@ -484,7 +483,7 @@ class BokehOps(LoginRequiredMixin, View):
                 'examination__date': 'datetime'}
         )
 
-        tap_callback = CustomJS(code="""
+        tap_callback = CustomJS(args=dict(mr=S3_URL), code="""
             var indices_of_selected_examinations = cb_data.source.selected.indices;
             var operations_div = document.getElementById('operations');
             var get_created_div = document.getElementById('canvas')
@@ -499,8 +498,8 @@ class BokehOps(LoginRequiredMixin, View):
                 var single_file = cb_data.source.data['file'][single_index];
                 var new_emb = document.createElement('embed');
                 new_div.appendChild(new_emb);
-                new_emb.src = "/media/documents/" + single_file;
-                new_emb.alt = "/media/documents/" + single_file;
+                new_emb.src = mr + 'media/' + single_file;
+                new_emb.alt = mr + 'media/' + single_file;
                 new_emb.width = "33%";
                 new_emb.height = "600px";
                                                                             }; """)

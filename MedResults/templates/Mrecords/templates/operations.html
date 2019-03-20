@@ -47,12 +47,12 @@
             <span class="square"><a class="tenth before after" href="{% url 's_del' specialist_id=x.id %}">skasuj</a></span>
             <span class="square"><a class="tenth before after" href="{% url 's_upd' specialist_id=x.id %}">edytuj</a></span>
         {% endif %}
-            <p><span class="square"><a class="tenth before after" href="{{ x.file.url }}">{{ x.file }}</a></span></p>
         {% if x.identify == 'examination' %}
             <span class="square"><a class="tenth before after" href="{% url 'e_del' examination_id=x.id %}">skasuj</a></span>
             <span class="square"><a class="tenth before after" href="{% url 'e_upd' examination_id=x.id %}">edytuj</a></span>
         {% endif %}
         {% if x.identify == 'file' %}
+            <p><span class="square"><a class="tenth before after" href="{{ x.file.url }}">{{ x.file }}</a></span></p>
             <span class="square"><a class="tenth before after" href="{% url 'f_del' file_id=x.id %}">skasuj</a></span>
             <span class="square"><a class="tenth before after" href="{% url 'f_upd' file_id=x.id %}">edytuj</a></span>
         {% endif %}
