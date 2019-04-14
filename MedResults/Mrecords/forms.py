@@ -56,7 +56,7 @@ class ExaminationForm(ModelForm):
 
     def __init__(self, user, *args, **kwargs):
         super(ExaminationForm, self).__init__(*args, **kwargs)
-        self.fields['signer'].queryset = Specialist.objects.filter(owner=user).order_by('surname')
+        self.fields['signer'].queryset = Specialist.objects.filter(owner=user).order_by('specialisation')
         self.fields['clinic'].queryset = Clinic.objects.filter(owner=user).order_by('name')
 
 
