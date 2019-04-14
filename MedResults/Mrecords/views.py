@@ -38,7 +38,6 @@ from bokeh.models.widgets import DatePicker
 import pandas as pd
 import numpy as np
 
-
 LoginView.redirect_authenticated_user = True
 
 
@@ -422,15 +421,15 @@ class BokehOps(LoginRequiredMixin, View):
         df['examination__date'] = df['examination__date']
         df['zeroes'] = 0
         df.reset_index(level=0, inplace=True)
-        levels = np.array([-9, 9, -7, 7, -5, 5, -3, 3])
+        levels = np.array([-13, 13, -11, 11, -9, 9, -7, 7, -5, 5, -3, 3])
         print(levels)
         level = levels[df['index'] % 8]
         df['level'] = level
-        # if examination_name && examination__signer__spec && examination__date are same make level identical
-        # so the circle on the plot will be in exacly same spot
+        # TODO if examination_name && examination__signer__spec && examination__date are same make level identical
+        # TODO so the circle on the plot will be in exacly same spot
         del df['owner']
         df.set_index('examination__date', inplace=True)
-        #print(tabulate(df, headers='keys', tablefmt='rst'))
+        # print(tabulate(df, headers='keys', tablefmt='rst'))
         specialisations_column = df['examination__signer__specialisation']
 
         source = ColumnDataSource(df)
@@ -458,7 +457,6 @@ class BokehOps(LoginRequiredMixin, View):
 
         start = psource.data['examination__date'].min() - pd.Timedelta(days=10)
         stop = psource.data['examination__date'].max() + pd.Timedelta(days=10)
-
 
         from MedResults.settings import S3_URL
         mr = S3_URL
@@ -517,7 +515,7 @@ class BokehOps(LoginRequiredMixin, View):
                    plot_width=1000,
                    plot_height=480,
                    x_axis_type='datetime',
-                   y_range=(-11, 11),
+                   y_range=(-15, 15),
                    tools=tools,
                    active_scroll='wheel_zoom')
 
@@ -539,14 +537,13 @@ class BokehOps(LoginRequiredMixin, View):
         p.ygrid.minor_grid_line_alpha = 0.05
         p.xaxis.axis_label_text_font_size = "40px"
 
-        custom_pallete = ["#8A2BE2", "#8B2323", "#98F5FF", "#FF6103","#00FFFF", "#458B74", "#636363", "#0000FF",
+        custom_pallete = ["#8A2BE2", "#8B2323", "#98F5FF", "#FF6103", "#00FFFF", "#458B74", "#636363", "#0000FF",
                           "#7FFF00", "#FF7F24", "#DC143C", "#CAFF70", "#9932CC", "#C1FFC1", "#97FFFF", "#00BFFF",
                           "#228B22", "#FFD700", "#8B7D6B", "#8470FF"]
 
         colors_for_circles = factor_cmap('examination__signer__specialisation',
                                          palette=custom_pallete,
                                          factors=specialisations_column.unique())
-
 
         main_time_line = p.line(x=(start, stop),
                                 y=(0, 0),
@@ -683,7 +680,7 @@ class BokehOps(LoginRequiredMixin, View):
             var v = cb_obj.value;
             var re = new RegExp(v);
             var en = psource.data['examination__name']
-            
+
                         //
             for (let x = 0; x < en.length; x++) {
                 if (en[x].toLowerCase().match(re)) {
@@ -709,7 +706,7 @@ class BokehOps(LoginRequiredMixin, View):
                                             labs=labs,
                                             min_date=min_date,
                                             max_date=max_date), code="""
-                                            
+
         // delete displayed docs after tap-tool usage:
         var catch_canvas = document.getElementById('canvas');
         if (catch_canvas) {
@@ -724,7 +721,7 @@ class BokehOps(LoginRequiredMixin, View):
 
         var date_string = min_date_new.toDateString();
         var locale_string = min_date_new.toLocaleDateString("pl-PL");
-        
+
         // reset labels after text_input search usage        
         var l = labs;
         var text_input = text_input;
@@ -736,7 +733,7 @@ class BokehOps(LoginRequiredMixin, View):
                 l[x].text_font_style = "normal";
                                     };
         //
-        
+
         // reset checkboxes to default of all selected
         var labels = checkboxes.labels
         var labels_holder = []
@@ -762,7 +759,7 @@ class BokehOps(LoginRequiredMixin, View):
 
         // psource.data = psource.data;
         // psource.change.emit();
-        
+
         datepicker_s.change.emit(min_date);
         """)
 
