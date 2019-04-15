@@ -35,6 +35,7 @@ from bokeh.models.widgets import CheckboxGroup, Tabs
 from bokeh.layouts import widgetbox, row, column, WidgetBox
 from bokeh.models.widgets import DatePicker
 
+
 import pandas as pd
 import numpy as np
 
@@ -421,9 +422,9 @@ class BokehOps(LoginRequiredMixin, View):
         df['examination__date'] = df['examination__date']
         df['zeroes'] = 0
         df.reset_index(level=0, inplace=True)
-        levels = np.array([-13, 13, -11, 11, -9, 9, -7, 7, -5, 5, -3, 3])
+        levels = np.array([-15, 15, -13, 13, -11, 11, -9, 9, -7, 7, -5, 5, -3, 3])
         print(levels)
-        level = levels[df['index'] % 8]
+        level = levels[df['index'] % 14]
         df['level'] = level
         # TODO if examination_name && examination__signer__spec && examination__date are same make level identical
         # TODO so the circle on the plot will be in exacly same spot
@@ -455,8 +456,8 @@ class BokehOps(LoginRequiredMixin, View):
                                   value=max_date,
                                   title='Badania do:')
 
-        start = psource.data['examination__date'].min() - pd.Timedelta(days=10)
-        stop = psource.data['examination__date'].max() + pd.Timedelta(days=10)
+        start = psource.data['examination__date'].min() - pd.Timedelta(days=45)
+        stop = psource.data['examination__date'].max() + pd.Timedelta(days=45)
 
         from MedResults.settings import S3_URL
         mr = S3_URL
@@ -509,13 +510,13 @@ class BokehOps(LoginRequiredMixin, View):
         hover_tool.renderers = []
         tap_tool.renderers = []
 
-        tools = [hover_tool, 'wheel_zoom', tap_tool, PanTool(), ResetTool()]
+        tools = [hover_tool, 'wheel_zoom', tap_tool, PanTool(), ResetTool(), 'zoom_in', 'zoom_out']
 
         p = figure(title="Mrecords",
                    plot_width=1000,
                    plot_height=480,
                    x_axis_type='datetime',
-                   y_range=(-15, 15),
+                   y_range=(-19, 19),
                    tools=tools,
                    active_scroll='wheel_zoom')
 
@@ -554,7 +555,6 @@ class BokehOps(LoginRequiredMixin, View):
                                 line_dash="dashed")
 
         p.add_layout(Arrow(end=VeeHead(fill_color='#57b9f2'),
-                           start=VeeHead(fill_color='#57b9f2'),
                            x_start=start,
                            y_start=0,
                            x_end=stop,
