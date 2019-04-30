@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_delete
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
 
@@ -70,8 +71,20 @@ class File(models.Model):
         return 'file'
 
 
-# https://matthiasomisore.com/uncategorized/django-delete-file-when-object-is-deleted/
-# https://lincolnloop.com/blog/django-anti-patterns-signals/
 @receiver(post_delete, sender=File)
 def submission_delete(sender, instance, **kwargs):
     instance.file.delete(False)
+
+#below works, but i wouldnt all-in on it;
+#for now it works but its still #TODO better
+
+@receiver(pre_save, sender=File)
+def submission_after_edit_delete(sender, instance, **kwargs):
+    try:
+        old_file = sender.objects.get(pk=instance.pk).file
+    except sender.DoesNotExist:
+        return False
+
+    new_file = instance.file
+    if not old_file == new_file:
+        old_file.delete(False)
