@@ -1,10 +1,6 @@
 
 import os
 
-# import locale
-# locale.setlocale(locale.LC_ALL, 'pl_PL.UTF-8')
-# print(locale.getlocale())
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -13,7 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'cav&qt0#6=3tss5g6j=3==^vw^ji7esbiirx@z+qw3+y%bznrs'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -74,12 +70,8 @@ WSGI_APPLICATION = 'MedResults.wsgi.application'
 
 DATABASES = {
     'default': {
-        'HOST': '127.0.0.1',
-        'NAME': 'mrecords',
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': 'postgres',
-        'PASSWORD': 'coderslab',
-        'PORT': '5432'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'default',
     }
 }
 
@@ -136,13 +128,12 @@ LOGIN_REDIRECT_URL = '/clinic/'
 
 LOGOUT_REDIRECT_URL = '/'
 
-# ---
+
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 AWS_STORAGE_BUCKET_NAME = os.environ['S3_BUCKET_NAME']
 AWS_S3_SIGNATURE_VERSION = os.environ['AWS_S3_SIGNATURE_VERSION']
 AWS_S3_REGION_NAME = os.environ['AWS_S3_REGION_NAME']
-
 
 # 1/2
 AWS_S3_CUSTOM_DOMAIN = 'http://%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
