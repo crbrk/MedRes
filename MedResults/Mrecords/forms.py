@@ -1,7 +1,6 @@
 from django import forms
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
-from django.utils.formats import localize
 
 from .models import Clinic
 from .models import Specialist
@@ -16,12 +15,6 @@ class RegisterForm(UserCreationForm):
     def identify(self):
         return "register"
 
-# class DateInput(forms.DateInput):
-#     format = '%Y/%m/%d'
-#     input_formats = ('%Y/%m/%d',)
-#     input_type = 'date'
-    # The widget format attribute sets the display format for the field
-    # The input_formats attribute lets you define the acceptable formats for date input.
 
 class ClinicForm(ModelForm):
 
@@ -59,14 +52,12 @@ class ExaminationForm(ModelForm):
         self.fields['signer'].queryset = Specialist.objects.filter(owner=user).order_by('specialisation')
         self.fields['clinic'].queryset = Clinic.objects.filter(owner=user).order_by('name')
 
-
     class Meta:
         model = Examination
         exclude = ['owner']
         labels = {
             'name': "*** Nazwa",
         }
-
 
 
 class MimetypeValidator(object):
@@ -94,4 +85,3 @@ class FileForm(ModelForm):
     class Meta:
         model = File
         exclude = ['owner']
-
